@@ -1,1 +1,63 @@
 
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>BolAI - मराठी Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 30px;
+    }
+    #chatbox {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .msg {
+      margin: 10px 0;
+    }
+    .user { text-align: right; color: blue; }
+    .bot { text-align: left; color: green; }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="chatbox">
+    <h2>🤖 BolAI - तुमचा मराठी मित्र</h2>
+    <div id="messages"></div>
+    <input type="text" id="userInput" placeholder="तुमचा प्रश्न टाका..." />
+    <button onclick="sendMessage()">पाठवा</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const msgBox = document.getElementById("messages");
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      msgBox.innerHTML += <div class="msg user">🧑 ${userText}</div>;
+      input.value = "";
+
+      // Mock reply – इथे AI API जोडता येईल पुढे
+      let botReply = "मी समजलो नाही. कृपया दुसरा प्रश्न विचारा.";
+
+      if (userText.includes("भारताचे पंतप्रधान")) {
+        botReply = "सध्या (2025) भारताचे पंतप्रधान नरेंद्र मोदी आहेत.";
+      }
+      else if (userText.includes("IIT Bombay")) {
+        botReply = "IIT Bombay ही भारतातील एक अग्रगण्य अभियांत्रिकी संस्था आहे.";
+      }
+
+      msgBox.innerHTML += <div class="msg bot">🤖 ${botReply}</div>;
+    }
+  </script>
+</body>
+</html>
