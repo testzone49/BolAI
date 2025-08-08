@@ -1,30 +1,48 @@
-
-<html>
+<!DOCTYPE html>
+<html lang="mr">
 <head>
   <meta charset="UTF-8">
-  <title>BolAI - मराठी Chatbot</title>
+  <title>BolAI - तुमचा मराठी मित्र</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f0f0;
-      padding: 30px;
+      background: #f9f9f9;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
     }
     #chatbox {
       width: 100%;
       max-width: 600px;
-      margin: auto;
       background: white;
       padding: 20px;
       border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .msg {
       margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
     }
-    .user { text-align: right; color: blue; }
-    .bot { text-align: left; color: green; }
+    .user {
+      background: #e0f7fa;
+      text-align: right;
+    }
+    .bot {
+      background: #f1f8e9;
+      text-align: left;
+    }
     input, button {
       padding: 10px;
       font-size: 16px;
+    }
+    #inputBox {
+      display: flex;
+      margin-top: 10px;
+    }
+    #userInput {
+      flex: 1;
+      margin-right: 10px;
     }
   </style>
 </head>
@@ -32,8 +50,10 @@
   <div id="chatbox">
     <h2>🤖 BolAI - तुमचा मराठी मित्र</h2>
     <div id="messages"></div>
-    <input type="text" id="userInput" placeholder="तुमचा प्रश्न टाका..." />
-    <button onclick="sendMessage()">पाठवा</button>
+    <div id="inputBox">
+      <input type="text" id="userInput" placeholder="तुमचा प्रश्न लिहा...">
+      <button onclick="sendMessage()">पाठवा</button>
+    </div>
   </div>
 
   <script>
@@ -43,20 +63,29 @@
       const userText = input.value.trim();
       if (!userText) return;
 
-      msgBox.innerHTML += <div class="msg user">🧑 ${userText}</div>;
+      msgBox.innerHTML += `<div class='msg user'>🧑 ${userText}</div>`;
       input.value = "";
 
-      // Mock reply – इथे AI API जोडता येईल पुढे
-      let botReply = "मी समजलो नाही. कृपया दुसरा प्रश्न विचारा.";
+      const apiResponse = await fetch('https://api-inference.huggingface.co/models/google/flan-t5-small', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer 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', // तुमचं Hugging Face token इथे टाका
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ inputs: userText })
+      });
 
-      if (userText.includes("भारताचे पंतप्रधान")) {
-        botReply = "सध्या (2025) भारताचे पंतप्रधान नरेंद्र मोदी आहेत.";
-      }
-      else if (userText.includes("IIT Bombay")) {
-        botReply = "IIT Bombay ही भारतातील एक अग्रगण्य अभियांत्रिकी संस्था आहे.";
+      let botReply = "माफ करा, काही उत्तर सापडलं नाही.";
+
+      if (apiResponse.ok) {
+        const data = await apiResponse.json();
+        if (data && data[0] && data[0].generated_text) {
+          botReply = data[0].generated_text;
+        }
       }
 
-      msgBox.innerHTML += <div class="msg bot">🤖 ${botReply}</div>;
+      msgBox.innerHTML += `<div class='msg bot'>🤖 ${botReply}</div>`;
+      msgBox.scrollTop = msgBox.scrollHeight;
     }
   </script>
 </body>
